@@ -16,20 +16,9 @@ public class SummativeAssesment {
         return input;
     }
 
-//    Function to convert String to Integer
-    public static int convertStrToInt(String input) {
-        int value = Integer.parseInt(input);
-        return value;
-    }
-//    Function to convert to lowercase
-
-    public static String convertToLowerCase(String input) {
-        return input.toLowerCase();
-    }
-
 //    Function to handle exit
     public static void handleExit(String input, String exitChar) {
-        if (convertToLowerCase(input).equals(convertToLowerCase(exitChar))) {
+        if (input.toLowerCase().equals(exitChar.toLowerCase())) {
             System.out.println("Bye Bye");
             System.exit(0);
         }
@@ -63,28 +52,13 @@ public class SummativeAssesment {
 
 //    Function to draw the table
     public static void drawTable(ArrayList<String> scoreArrPlayer1, ArrayList<String> scoreArrPlayer2, ArrayList<String> selectionArrPlayer1, ArrayList<String> selectionArrPlayer2) {
-        String player1Ones = "", player1Twos = "", player1Threes = "", player1Fours = "", player1Fives = "", player1Sixes = "", player1Sequence = "", player2Ones = "", player2Twos = "", player2Threes = "", player2Fours = "", player2Fives = "", player2Sixes = "", player2Sequence = "";
+
         int player1Total = 0, player2Total = 0;
         int total;
         int intInput;
-        String[] player1Array = {player1Ones, player1Twos, player1Threes, player1Fours, player1Fives, player1Sixes, player1Sequence};
-        String[] player2Array = {player2Ones, player2Twos, player2Threes, player2Fours, player2Fives, player2Sixes, player2Sequence};
 
-        for (int i = 0; i < scoreArrPlayer1.size(); i++) {
-            intInput = Integer.parseInt(selectionArrPlayer1.get(i));
-            player1Array[intInput - 1] = scoreArrPlayer1.get(i);
-            total = convertStrToInt(scoreArrPlayer1.get(i));
-            player1Total += total;
-
-        }
-
-        for (int i = 0; i < scoreArrPlayer2.size(); i++) {
-            intInput = Integer.parseInt(selectionArrPlayer2.get(i));
-            player2Array[intInput - 1] = scoreArrPlayer2.get(i);
-            total = convertStrToInt(scoreArrPlayer2.get(i));
-            player2Total += total;
-
-        }
+        player1Total = calulateOverallTotal(scoreArrPlayer1);
+        player2Total = calulateOverallTotal(scoreArrPlayer2);
 
         System.out.println(
                 "---------------------------------------------------------");
@@ -93,31 +67,31 @@ public class SummativeAssesment {
         System.out.println(
                 "---------------------------------------------------------");
         System.out.println(
-                "| Ones\t\t\t|\t" + player1Array[0] + "\t|\t" + player2Array[0] + "\t|");
+                "| Ones\t\t\t|\t" + scoreArrPlayer1.get(0) + "\t|\t" + scoreArrPlayer2.get(0) + "\t|");
         System.out.println(
                 "---------------------------------------------------------");
         System.out.println(
-                "| Twos\t\t\t|\t" + player1Array[1] + "\t|\t" + player2Array[1] + "\t|");
+                "| Twos\t\t\t|\t" + scoreArrPlayer1.get(1) + "\t|\t" + scoreArrPlayer2.get(1) + "\t|");
         System.out.println(
                 "---------------------------------------------------------");
         System.out.println(
-                "| Threes\t\t|\t" + player1Array[2] + "\t|\t" + player2Array[2] + "\t|");
+                "| Threes\t\t|\t" + scoreArrPlayer1.get(2) + "\t|\t" + scoreArrPlayer2.get(2) + "\t|");
         System.out.println(
                 "---------------------------------------------------------");
         System.out.println(
-                "| Fours\t\t\t|\t" + player1Array[3] + "\t|\t" + player2Array[3] + "\t|");
+                "| Fours\t\t\t|\t" + scoreArrPlayer1.get(3) + "\t|\t" + scoreArrPlayer2.get(3) + "\t|");
         System.out.println(
                 "---------------------------------------------------------");
         System.out.println(
-                "| Fives\t\t\t|\t" + player1Array[4] + "\t|\t" + player2Array[4] + "\t|");
+                "| Fives\t\t\t|\t" + scoreArrPlayer1.get(4) + "\t|\t" + scoreArrPlayer2.get(4) + "\t|");
         System.out.println(
                 "---------------------------------------------------------");
         System.out.println(
-                "| Sixes\t\t\t|\t" + player1Array[5] + "\t|\t" + player2Array[5] + "\t|");
+                "| Sixes\t\t\t|\t" + scoreArrPlayer1.get(5) + "\t|\t" + scoreArrPlayer2.get(5) + "\t|");
         System.out.println(
                 "---------------------------------------------------------");
         System.out.println(
-                "| Sequence 20\t\t|\t" + player1Array[6] + "\t|\t" + player2Array[6] + "\t|");
+                "| Sequence 20\t\t|\t" + scoreArrPlayer1.get(6) + "\t|\t" + scoreArrPlayer2.get(6) + "\t|");
         System.out.println(
                 "---------------------------------------------------------");
         System.out.println(
@@ -142,11 +116,12 @@ public class SummativeAssesment {
     }
 
 //    Function to display the next turn
-    public static String displayNextTurn(int numberOfThrows, int playerNum) {
-        System.out.print("Next throw of this turn, ");
-        displayNumOfThrows(numberOfThrows, playerNum);
-        String input = handleThrows(numberOfThrows);
-        return input;
+    public static void displayNextTurn(int numberOfThrows, int playerNum) {
+        if (numberOfThrows > 0) {
+            System.out.print("Next throw of this turn, ");
+            displayNumOfThrows(numberOfThrows, playerNum);
+            handleThrows(numberOfThrows);
+        }
     }
 
 //    Function to display how many throws a player has
@@ -161,7 +136,7 @@ public class SummativeAssesment {
         do {
             System.out.print("Throw " + numberOfThrows + " dice, enter 't' to throw or 'f' to forfiet > ");
             input = handleScanner();
-            isValid = (!(convertToLowerCase(input).equals("t") || convertToLowerCase(input).equals("f")));
+            isValid = (!(input.toLowerCase().equals("t") || input.toLowerCase().equals("f")));
             if (isValid) {
                 System.out.println("\nInvalid input");
             }
@@ -172,7 +147,9 @@ public class SummativeAssesment {
 
 //    Function to display the number of remaining throws
     public static int remainingThrowsPrompt(int remainingThrows) {
+        if (remainingThrows > 0) {
         System.out.println("\n" + remainingThrows + " throws remaining for this turn.\n");
+        }
         remainingThrows--;
         return remainingThrows;
     }
@@ -190,13 +167,15 @@ public class SummativeAssesment {
 //    Function that simulates dice throws
     public static ArrayList<Integer> generateDiceThrow(int numOfThrows) {
         ArrayList<Integer> arr = new ArrayList<>();
-        System.out.print("\nThrow: ");
-        for (int i = 0; i < numOfThrows; i++) {
-            int num = generateRandomNumber();
-            arr.add(num);
-            System.out.print("[ " + num + " ] ");
+        if (numOfThrows > 0) {
+            System.out.print("\nThrow: ");
+            for (int i = 0; i < numOfThrows; i++) {
+                int num = generateRandomNumber();
+                arr.add(num);
+                System.out.print("[ " + num + " ] ");
+            }
+            System.out.println("");
         }
-        System.out.println("");
         return arr;
     }
 
@@ -229,7 +208,7 @@ public class SummativeAssesment {
 //    Function to handle categories 
     public static String handleCategory(String input, ArrayList<Integer> arr, ArrayList<String> selectionArr) {
         String categorySelected = "";
-        switch (convertToLowerCase(input)) {
+        switch (input.toLowerCase()) {
             case "s": {
                 categorySelected = handleSelection(arr, selectionArr);
                 selectionArr.add(categorySelected);
@@ -237,6 +216,7 @@ public class SummativeAssesment {
             }
             case "d": {
                 handleDefer();
+                break;
             }
         }
         return categorySelected;
@@ -251,8 +231,8 @@ public class SummativeAssesment {
 
     //    Function to check if category selected is valid
     public static boolean checkIfCategoryValid(String input) {
-        boolean ItsValid = true;
-        ItsValid = (!(convertToLowerCase(input).equals("s") || convertToLowerCase(input).equals("d")));
+        boolean ItsValid;
+        ItsValid = (!(input.toLowerCase().equals("s") || input.toLowerCase().equals("d")));
         if (ItsValid) {
             System.out.println("\nInvalid prompt");
         }
@@ -312,12 +292,17 @@ public class SummativeAssesment {
 
 //    Function to play selection 
     public static int playSelection(String categorySelected, int count, ArrayList<Integer> diceArr, ArrayList<String> player1SequenceArray) {
-        if (categorySelected.equals("7")) {
-            player1SequenceArray = handleSequence(diceArr, player1SequenceArray);
-            count = player1SequenceArray.size();
-        } else {
-            count += playSelection1to6(count, categorySelected, diceArr);
-            settingDiceAside(categorySelected, count);
+        if (!(categorySelected.equals(""))) {
+            if (count < 5) {
+                if (categorySelected.equals("7")) {
+                    player1SequenceArray = handleSequence(diceArr, player1SequenceArray);
+                    count = player1SequenceArray.size();
+
+                } else {
+                    count += playSelection1to6(count, categorySelected, diceArr);
+                    settingDiceAside(categorySelected, count);
+                }
+            }
         }
         return count;
     }
@@ -347,14 +332,13 @@ public class SummativeAssesment {
 
     //    Function to read sequence input
     public static ArrayList<Integer> readingSequenceInput() {
-        ArrayList<Integer> sequenceArray = new ArrayList<>();
-        sequenceArray = handleTokens();
+        ArrayList<Integer> sequenceArray = handleTokens();
         return sequenceArray;
     }
 
 //    Function for reading sequence input
     public static ArrayList<Integer> handleTokens() {
-        ArrayList<Integer> SequenceArray = new ArrayList<Integer>();
+        ArrayList<Integer> SequenceArray = new ArrayList<>();
         Scanner scn = new Scanner(System.in);
         String str;
         String[] tokens;
@@ -420,7 +404,7 @@ public class SummativeAssesment {
 //    Function to display the sequence of dices
     public static void displaySequenceSelected(ArrayList<Integer> arr, ArrayList<String> sequenceArraySelected) {
         int count = 0;
-        if (sequenceArraySelected.size() == 1 && sequenceArraySelected.get(0) == "0") {
+        if (sequenceArraySelected.size() == 1 && sequenceArraySelected.get(0).equals("0")) {
             System.out.println("\nNone selected");
             System.out.println("");
         } else {
@@ -437,7 +421,7 @@ public class SummativeAssesment {
 //    Function to count the dices matching the selection
     public static int countingThrows(String input, ArrayList<Integer> arr) {
         int count = 0;
-        int diceNumSelected = convertStrToInt(input);
+        int diceNumSelected = Integer.parseInt(input);
         for (Integer diceNum : arr) {
             if (diceNum == diceNumSelected) {
                 count++;
@@ -462,24 +446,54 @@ public class SummativeAssesment {
     }
 
     // Function to display the total
-    public static int displayTotal(String categorySelected, int count, int playerNum, ArrayList<String> sequence) {
+    public static int displayTotal(String categorySelected, int count, int playerNum, ArrayList<String> sequence, ArrayList<String> scoreArr) {
         int total;
+
+        if (categorySelected.equals("7")) {
+            total = displaySequenceTotal(sequence, playerNum);
+        } else {
+            total = displayNormalTotal(categorySelected, count, playerNum);
+        }
+
         switch (categorySelected) {
-            case "7": {
-                total = displaySequenceTotal(sequence, playerNum);
+
+            case "1": {
+                scoreArr.add(0, (Integer.toString(total)));
                 break;
             }
-            default: {
-                total = displayNormalTotal(categorySelected, count, playerNum);
+            case "2": {
+                scoreArr.add(1, (Integer.toString(total)));
+                break;
+            }
+            case "3": {
+                scoreArr.add(2, (Integer.toString(total)));
+                break;
+            }
+            case "4": {
+                scoreArr.add(3, (Integer.toString(total)));
+                break;
+            }
+            case "5": {
+                scoreArr.add(4, (Integer.toString(total)));
+                break;
+            }
+            case "6": {
+                scoreArr.add(5, (Integer.toString(total)));
+                break;
+            }
+            case "7": {
+
+                scoreArr.add(6, (Integer.toString(total)));
                 break;
             }
         }
+
         return total;
     }
 
 //    Function to display the normal total
     public static int displayNormalTotal(String categorySelected, int count, int playerNum) {
-        int diceNum = convertStrToInt(categorySelected);
+        int diceNum = Integer.parseInt(categorySelected);
         int total = diceNum * count;
         System.out.println("\nPlayer " + playerNum + " made " + count + " with value " + categorySelected + " and scores " + total + " for that round.");
         return total;
@@ -506,7 +520,7 @@ public class SummativeAssesment {
             return false;
         }
         for (int i = 0; i < sequence.size() - 1; i++) {
-            if ((Integer.parseInt(sequence.get(i))) != Integer.parseInt(sequence.get(i + 1)) + 1) {
+            if ((Integer.parseInt(sequence.get(i))) != Integer.parseInt(sequence.get(i + 1)) - 1) {
                 return false;
             }
         }
@@ -538,6 +552,19 @@ public class SummativeAssesment {
         }
     }
 
+//    Function to calculate the overall total  
+    public static int calulateOverallTotal(ArrayList<String> player1ScoreArr) {
+        int total = 0;
+        int scoreToInt;
+        for (int i = 0; i < player1ScoreArr.size(); i++) {
+            if (!(player1ScoreArr.get(i).equals(""))) {
+                scoreToInt = Integer.parseInt(player1ScoreArr.get(i));
+                total += scoreToInt;
+            }
+        }
+        return total;
+    }
+
 //    Function to display the winner
     public static void displayWinner(int winnerNumber) {
         System.out.println("\nGame over.\nPlayer " + winnerNumber + " has won the game\n");
@@ -547,15 +574,21 @@ public class SummativeAssesment {
 //    Function to play the game
     public static int playGame() {
         ArrayList<Integer> diceArr;
-        ArrayList<String> player1SelectionArr = new ArrayList<>();
-        ArrayList<String> player2SelectionArr = new ArrayList<>();
-        ArrayList<String> player1ScoreArr = new ArrayList<>();
-        ArrayList<String> player2ScoreArr = new ArrayList<>();
-        ArrayList<String> player1SequenceArray = new ArrayList<>();
-        ArrayList<String> player2SequenceArray = new ArrayList<>();
+        ArrayList<String> player1SelectionArr = new ArrayList<>(7);
+        ArrayList<String> player2SelectionArr = new ArrayList<>(7);
+        ArrayList<String> player1ScoreArr = new ArrayList<>(7);
+        ArrayList<String> player2ScoreArr = new ArrayList<>(7);
+        ArrayList<String> player1SequenceArray = new ArrayList<>(6);
+        ArrayList<String> player2SequenceArray = new ArrayList<>(6);
+        for (int i = 0; i < 7; i++) {
+            player1ScoreArr.add("");
+            player2ScoreArr.add("");
+        }
         String input;
-        String categorySelected = "";
+        String categorySelected;
         final int NUM_OF_THROWS = 5;
+        final int NUM_OF_ROUNDS = 14;
+        int numOfRemainingDiceToThrow;
         int playerNum = 1;
         int roundNum = 1;
         int total;
@@ -563,7 +596,7 @@ public class SummativeAssesment {
 
         firstPrompt();
         drawTable(player1ScoreArr, player2ScoreArr, player1SelectionArr, player2SelectionArr);
-        for (int k = 0; k < 14; k++) {
+        for (int k = 0; k < NUM_OF_ROUNDS; k++) {
             int count = 0;
             int remainingThrows = 2;
             if (k % 2 == 0) {
@@ -575,23 +608,20 @@ public class SummativeAssesment {
             input = selectCategoryOrDefer();
             if (playerNum == 1) {
                 categorySelected = handleCategory(input, diceArr, player1SelectionArr);
-                if (!(categorySelected.isEmpty())) {
-                    count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
-                }
-
+                count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
             } else {
                 categorySelected = handleCategory(input, diceArr, player2SelectionArr);
-                if (!(categorySelected.isEmpty())) {
-                    count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
-                }
+                count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
+
             }
 
             for (int i = 0; i < 2; i++) {
-                displayNextTurn(NUM_OF_THROWS - count, playerNum);
+                numOfRemainingDiceToThrow = NUM_OF_THROWS - count;
+                displayNextTurn(numOfRemainingDiceToThrow, playerNum);
                 if (i == 0) {
                     remainingThrowsPrompt(remainingThrows);
                 }
-                diceArr = generateDiceThrow(NUM_OF_THROWS - count);
+                diceArr = generateDiceThrow(numOfRemainingDiceToThrow);
                 if (count == 0 && i == 1) {
                     if (playerNum == 1) {
                         categorySelected = handleSelection(diceArr, player1SelectionArr);
@@ -607,29 +637,22 @@ public class SummativeAssesment {
                         count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
                     }
                 } else if (count == 0) {
-                    input = selectCategory();
+                    input = selectCategoryOrDefer();
                     if (playerNum == 1) {
-                        count = playSelection(categorySelected, count, diceArr, player1SelectionArr);
+                        categorySelected = handleCategory(input, diceArr, player1SelectionArr);
+                        count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
                     } else {
-                        count = playSelection(categorySelected, count, diceArr, player2SelectionArr);
-                    }
-                    if (!(count == 0)) {
-                        if (playerNum == 1) {
-                            count = playSelection(player1SequenceArray.get(0), count, diceArr, player1SequenceArray);
-                        } else {
-                            count = playSelection(player2SequenceArray.get(0), count, diceArr, player2SequenceArray);
-                        }
+                        categorySelected = handleCategory(input, diceArr, player2SelectionArr);
+                        count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
+
                     }
 
                 }
             }
-
             if (playerNum == 1) {
-                total = displayTotal(categorySelected, count, playerNum, player1SequenceArray);
-                player1ScoreArr.add(Integer.toString(total));
+                total = displayTotal(categorySelected, count, playerNum, player1SequenceArray, player1ScoreArr);
             } else {
-                total = displayTotal(categorySelected, count, playerNum, player2SequenceArray);
-                player2ScoreArr.add(Integer.toString(total));
+                total = displayTotal(categorySelected, count, playerNum, player2SequenceArray, player2ScoreArr);
             }
 
             drawTable(player1ScoreArr, player2ScoreArr, player1SelectionArr, player2SelectionArr);
@@ -642,7 +665,9 @@ public class SummativeAssesment {
 
 //    Main function
     public static void main(String[] args) {
+
         int playerWinner = playGame();
         displayWinner(playerWinner);
+
     }
 }
