@@ -1,0 +1,648 @@
+package summative.assesment;
+
+import java.util.Scanner;
+import java.util.Random;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+public class SummativeAssesment {
+
+//    Function to handle input through Scanner.
+    public static String handleScanner() {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.next();
+        return input;
+    }
+
+//    Function to convert String to Integer
+    public static int convertStrToInt(String input) {
+        int value = Integer.parseInt(input);
+        return value;
+    }
+//    Function to convert to lowercase
+
+    public static String convertToLowerCase(String input) {
+        return input.toLowerCase();
+    }
+
+//    Function to handle exit
+    public static void handleExit(String input, String exitChar) {
+        if (convertToLowerCase(input).equals(convertToLowerCase(exitChar))) {
+            System.out.println("Bye Bye");
+            System.exit(0);
+        }
+    }
+
+    public static void printArray(ArrayList arr) {
+        System.out.print("[ ");
+        arr.forEach(num -> {
+            System.out.print(num + " ");
+        });
+        System.out.print("]");
+    }
+
+//    Function for getting first prompt.
+    public static void firstPrompt() {
+        String input;
+        boolean isValid;
+        System.out.println("Strategic dice game");
+        do {
+            System.out.print("Play game (1) or Exit game (0) > ");
+            input = handleScanner();
+//            If input other than 1 or 0 display error message
+            isValid = (!(input.equals("1") || input.equals("0")));
+            if (isValid) {
+                System.out.println("Invalid input\n");
+            }
+        } while (isValid);
+//        Exiting the program in case user selects 0
+        handleExit(input, "0");
+    }
+
+//    Function to draw the table
+    public static void drawTable(ArrayList<String> scoreArrPlayer1, ArrayList<String> scoreArrPlayer2, ArrayList<String> selectionArrPlayer1, ArrayList<String> selectionArrPlayer2) {
+        String player1Ones = "", player1Twos = "", player1Threes = "", player1Fours = "", player1Fives = "", player1Sixes = "", player1Sequence = "", player2Ones = "", player2Twos = "", player2Threes = "", player2Fours = "", player2Fives = "", player2Sixes = "", player2Sequence = "";
+        int player1Total = 0, player2Total = 0;
+        int total;
+        int intInput;
+        String[] player1Array = {player1Ones, player1Twos, player1Threes, player1Fours, player1Fives, player1Sixes, player1Sequence};
+        String[] player2Array = {player2Ones, player2Twos, player2Threes, player2Fours, player2Fives, player2Sixes, player2Sequence};
+
+        for (int i = 0; i < scoreArrPlayer1.size(); i++) {
+            intInput = Integer.parseInt(selectionArrPlayer1.get(i));
+            player1Array[intInput - 1] = scoreArrPlayer1.get(i);
+            total = convertStrToInt(scoreArrPlayer1.get(i));
+            player1Total += total;
+
+        }
+
+        for (int i = 0; i < scoreArrPlayer2.size(); i++) {
+            intInput = Integer.parseInt(selectionArrPlayer2.get(i));
+            player2Array[intInput - 1] = scoreArrPlayer2.get(i);
+            total = convertStrToInt(scoreArrPlayer2.get(i));
+            player2Total += total;
+
+        }
+
+        System.out.println(
+                "---------------------------------------------------------");
+        System.out.println(
+                "|\t\t\t|  Player 1\t|  Player 2\t|");
+        System.out.println(
+                "---------------------------------------------------------");
+        System.out.println(
+                "| Ones\t\t\t|\t" + player1Array[0] + "\t|\t" + player2Array[0] + "\t|");
+        System.out.println(
+                "---------------------------------------------------------");
+        System.out.println(
+                "| Twos\t\t\t|\t" + player1Array[1] + "\t|\t" + player2Array[1] + "\t|");
+        System.out.println(
+                "---------------------------------------------------------");
+        System.out.println(
+                "| Threes\t\t|\t" + player1Array[2] + "\t|\t" + player2Array[2] + "\t|");
+        System.out.println(
+                "---------------------------------------------------------");
+        System.out.println(
+                "| Fours\t\t\t|\t" + player1Array[3] + "\t|\t" + player2Array[3] + "\t|");
+        System.out.println(
+                "---------------------------------------------------------");
+        System.out.println(
+                "| Fives\t\t\t|\t" + player1Array[4] + "\t|\t" + player2Array[4] + "\t|");
+        System.out.println(
+                "---------------------------------------------------------");
+        System.out.println(
+                "| Sixes\t\t\t|\t" + player1Array[5] + "\t|\t" + player2Array[5] + "\t|");
+        System.out.println(
+                "---------------------------------------------------------");
+        System.out.println(
+                "| Sequence 20\t\t|\t" + player1Array[6] + "\t|\t" + player2Array[6] + "\t|");
+        System.out.println(
+                "---------------------------------------------------------");
+        System.out.println(
+                "| TOTAL\t\t\t|\t" + player1Total + "\t|\t" + player2Total + "\t|");
+    }
+
+    //    Function to display the round number
+    public static void displayRound(int roundNumber) {
+        System.out.println("\n\n----------");
+        System.out.println("Round " + roundNumber);
+        System.out.println("----------\n");
+
+    }
+
+    //    Function to display the prompt
+    public static String displayFirstPrompt(int numberOfThrows, int playerNum) {
+        System.out.print("\nFirst throw of this turn, ");
+        displayNumOfThrows(numberOfThrows, playerNum);
+        String input = handleThrows(numberOfThrows);
+        return input;
+
+    }
+
+//    Function to display the next turn
+    public static String displayNextTurn(int numberOfThrows, int playerNum) {
+        System.out.print("Next throw of this turn, ");
+        displayNumOfThrows(numberOfThrows, playerNum);
+        String input = handleThrows(numberOfThrows);
+        return input;
+    }
+
+//    Function to display how many throws a player has
+    public static void displayNumOfThrows(int numberOfThrows, int playerNum) {
+        System.out.print("Player " + playerNum + " to throw " + numberOfThrows + " dice.\n");
+    }
+
+    // Function to display how many throws
+    public static String handleThrows(int numberOfThrows) {
+        String input;
+        boolean isValid;
+        do {
+            System.out.print("Throw " + numberOfThrows + " dice, enter 't' to throw or 'f' to forfiet > ");
+            input = handleScanner();
+            isValid = (!(convertToLowerCase(input).equals("t") || convertToLowerCase(input).equals("f")));
+            if (isValid) {
+                System.out.println("\nInvalid input");
+            }
+            handleExit(input, "f");
+        } while (isValid);
+        return input;
+    }
+
+//    Function to display the number of remaining throws
+    public static int remainingThrowsPrompt(int remainingThrows) {
+        System.out.println("\n" + remainingThrows + " throws remaining for this turn.\n");
+        remainingThrows--;
+        return remainingThrows;
+    }
+
+//    Function that simulates a random number between 1 and 6
+    public static int generateRandomNumber() {
+        Random random = new Random();
+        int min = 1;
+        int max = 6;
+        int randomNumber = random.nextInt(max - min + 1) + min;
+
+        return randomNumber;
+    }
+
+//    Function that simulates dice throws
+    public static ArrayList<Integer> generateDiceThrow(int numOfThrows) {
+        ArrayList<Integer> arr = new ArrayList<>();
+        System.out.print("\nThrow: ");
+        for (int i = 0; i < numOfThrows; i++) {
+            int num = generateRandomNumber();
+            arr.add(num);
+            System.out.print("[ " + num + " ] ");
+        }
+        System.out.println("");
+        return arr;
+    }
+
+//    Function to handle selection category
+    public static String handleSelectionCategory(ArrayList<Integer> arr, int count) {
+        String categorySelected = selectCategory();
+        playSelection1to6(count, categorySelected, arr);
+        return categorySelected;
+    }
+
+    //    Function to select category
+    public static String selectCategoryOrDefer() {
+        Boolean itsValid;
+        String input;
+        do {
+            input = selectCategory();
+            itsValid = checkIfCategoryValid(input);
+        } while (itsValid);
+        return input;
+    }
+
+    //    Function to prompt the user to select a category or defer
+    public static String selectCategory() {
+        System.out.print("Enter 's' to select category (number on die/dice) or 'd' to defer > ");
+        String input = handleScanner();
+        System.out.println("");
+        return input;
+    }
+
+//    Function to handle categories 
+    public static String handleCategory(String input, ArrayList<Integer> arr, ArrayList<String> selectionArr) {
+        String categorySelected = "";
+        switch (convertToLowerCase(input)) {
+            case "s": {
+                categorySelected = handleSelection(arr, selectionArr);
+                selectionArr.add(categorySelected);
+                break;
+            }
+            case "d": {
+                handleDefer();
+            }
+        }
+        return categorySelected;
+    }
+
+//  Function to play the selection 1 to 6
+    public static int playSelection1to6(int count, String categorySelected, ArrayList<Integer> arr) {
+        count = countingThrows(categorySelected, arr);
+        return count;
+
+    }
+
+    //    Function to check if category selected is valid
+    public static boolean checkIfCategoryValid(String input) {
+        boolean ItsValid = true;
+        ItsValid = (!(convertToLowerCase(input).equals("s") || convertToLowerCase(input).equals("d")));
+        if (ItsValid) {
+            System.out.println("\nInvalid prompt");
+        }
+        return ItsValid;
+    }
+
+    //    Function to check if category selected is valid
+    public static Boolean isValidCategory(String input, ArrayList<String> selectionArr) {
+        Boolean itsValid;
+        switch (input) {
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+                itsValid = false;
+                break;
+            default:
+                itsValid = true;
+                System.out.println("\nInvalid input");
+        }
+        if (selectionArr.contains(input)) {
+            System.out.println("\nThat was already selected, please choose something else");
+            itsValid = true;
+        }
+        return itsValid;
+    }
+
+// Function to handle user selection
+    public static String handleSelection(ArrayList<Integer> arr, ArrayList<String> selectionArr) {
+        String choice;
+        boolean itsValid;
+        System.out.println("\nSelect category to play.");
+        do {
+            System.out.print("Ones (1) Twos (2) Threes (3) Fours (4) Fives (5) Sixes (6) or Sequence (7) > ");
+            choice = handleScanner();
+            itsValid = isValidCategory(choice, selectionArr); // Validation check
+        } while (itsValid);
+        return choice;
+    }
+
+//    Function to hanlde defer
+    public static void handleDefer() {
+        System.out.println("Selection deferred\n");
+
+    }
+
+//    Function to display selection
+    public static void displaySelected(String input) {
+        String[] selections = {"Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "Sequence 20"};
+        int intValue = Integer.parseInt(input);
+        System.out.println("\n" + selections[intValue - 1] + " selected.");
+
+    }
+
+//    Function to play selection 
+    public static int playSelection(String categorySelected, int count, ArrayList<Integer> diceArr, ArrayList<String> player1SequenceArray) {
+        if (categorySelected.equals("7")) {
+            player1SequenceArray = handleSequence(diceArr, player1SequenceArray);
+            count = player1SequenceArray.size();
+        } else {
+            count += playSelection1to6(count, categorySelected, diceArr);
+            settingDiceAside(categorySelected, count);
+        }
+        return count;
+    }
+
+    //    Function to handle the sequence selection
+    public static ArrayList<String> handleSequence(ArrayList<Integer> arr, ArrayList<String> sequenceArray) {
+        ArrayList<Integer> indexesSelected = new ArrayList<>();
+        displaySequenceSelection(arr);
+        boolean isValid;
+        do {
+            indexesSelected = readingSequenceInput();
+            isValid = checkSequenceInputValidity(arr, indexesSelected);
+
+        } while (!(isValid));
+        sequenceArray = addSequenceDices(arr, indexesSelected, sequenceArray);
+        displaySequenceSelected(arr, sequenceArray);
+        return sequenceArray;
+    }
+
+    //    Function to display dice sequence selection
+    public static void displaySequenceSelection(ArrayList<Integer> arr) {
+        System.out.println("\n0. None");
+        for (int i = 1; i <= arr.size(); i++) {
+            System.out.println(i + "." + "[ " + arr.get(i - 1) + " ]");
+        }
+    }
+
+    //    Function to read sequence input
+    public static ArrayList<Integer> readingSequenceInput() {
+        ArrayList<Integer> sequenceArray = new ArrayList<>();
+        sequenceArray = handleTokens();
+        return sequenceArray;
+    }
+
+//    Function for reading sequence input
+    public static ArrayList<Integer> handleTokens() {
+        ArrayList<Integer> SequenceArray = new ArrayList<Integer>();
+        Scanner scn = new Scanner(System.in);
+        String str;
+        String[] tokens;
+        boolean isValid = true;
+        do {
+            System.out.print("\nEnter which dice you wish to set aside using the number labels separated by a space (eg., 1 , 3 , 5) or enter 0 for none > ");
+            str = scn.nextLine();
+            tokens = str.split("\\s+");
+            for (String token : tokens) {
+                try {
+//                Trying to parse the token as an integer
+                    int num = Integer.parseInt(token);
+                    SequenceArray.add(num);
+                    isValid = true;
+//                If the token is not an integer, handle the exception
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input detected, please try again");
+                    SequenceArray.clear();
+                    isValid = false;
+                    break;
+                }
+            }
+        } while (!(isValid));
+        return SequenceArray;
+    }
+
+//    Function to check the validity of sequence input
+    public static boolean checkSequenceInputValidity(ArrayList<Integer> arr, ArrayList<Integer> sequenceArray) {
+        Set<Integer> set = new HashSet<>(sequenceArray);
+        if (sequenceArray.isEmpty()) {
+            System.out.println("\nYou haven't seleceted anything, plase try again");
+            return false;
+        }
+        if (sequenceArray.size() > 5) {
+            System.out.println("You have selected to many dice, plase try again");
+            return false;
+        } else if (set.size() < sequenceArray.size()) {
+            System.out.println("\nThere are duplicates, plase try again");
+            return false;
+        } else {
+            for (int num : sequenceArray) {
+                if (num < 0 || num > arr.size()) {
+                    System.out.println("\nInput out of bounds, plase try again");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    //    Function to add dices to the sequence array
+    public static ArrayList<String> addSequenceDices(ArrayList<Integer> arr, ArrayList<Integer> indexesSelected, ArrayList<String> sequenceArraySelected) {
+        for (int num : indexesSelected) {
+            int index = num - 1;
+            if (index >= 0 && index < arr.size()) {
+                int numbar = arr.get(index);
+                sequenceArraySelected.add(Integer.toString(numbar));
+            }
+        }
+        return sequenceArraySelected;
+    }
+
+//    Function to display the sequence of dices
+    public static void displaySequenceSelected(ArrayList<Integer> arr, ArrayList<String> sequenceArraySelected) {
+        int count = 0;
+        if (sequenceArraySelected.size() == 1 && sequenceArraySelected.get(0) == "0") {
+            System.out.println("\nNone selected");
+            System.out.println("");
+        } else {
+            Collections.sort(sequenceArraySelected);
+            System.out.println("\nYou have selected the following dice to keep.");
+            for (String numbar : sequenceArraySelected) {
+                System.out.print("[" + numbar + "]");
+                count++;
+            }
+            System.out.println("\n");
+        }
+    }
+
+//    Function to count the dices matching the selection
+    public static int countingThrows(String input, ArrayList<Integer> arr) {
+        int count = 0;
+        int diceNumSelected = convertStrToInt(input);
+        for (Integer diceNum : arr) {
+            if (diceNum == diceNumSelected) {
+                count++;
+            }
+        }
+        System.out.print("\nThat throw had " + count + " dice with value " + diceNumSelected);
+        System.out.println("");
+        return count;
+    }
+
+//    Function to set dice aside
+    public static int settingDiceAside(String input, int count) {
+        if (count != 0) {
+            System.out.print("Setting aside " + count + " dice: ");
+            for (int i = 0; i < count; i++) {
+                System.out.print("[ " + input + " ] ");
+            }
+            System.out.println("");
+        }
+        System.out.println("");
+        return count;
+    }
+
+    // Function to display the total
+    public static int displayTotal(String categorySelected, int count, int playerNum, ArrayList<String> sequence) {
+        int total;
+        switch (categorySelected) {
+            case "7": {
+                total = displaySequenceTotal(sequence, playerNum);
+                break;
+            }
+            default: {
+                total = displayNormalTotal(categorySelected, count, playerNum);
+                break;
+            }
+        }
+        return total;
+    }
+
+//    Function to display the normal total
+    public static int displayNormalTotal(String categorySelected, int count, int playerNum) {
+        int diceNum = convertStrToInt(categorySelected);
+        int total = diceNum * count;
+        System.out.println("\nPlayer " + playerNum + " made " + count + " with value " + categorySelected + " and scores " + total + " for that round.");
+        return total;
+    }
+
+//    Function to display the total if player has selected a sequence  
+    public static int displaySequenceTotal(ArrayList<String> sequence, int playerNum) {
+        int total = 0;
+        Boolean isValidSequence = itsValidSequence(sequence);
+        if (isValidSequence) {
+            System.out.println("A correct sequence has been established");
+            System.out.println("Player " + playerNum + " scores 20 for the sequence category.");
+            total = 20;
+        } else {
+            System.out.println("A correct sequence has not been established");
+            System.out.println("Player " + playerNum + " scores 0 for the sequence category.");
+        }
+        return total;
+    }
+
+//    Function to check if the sequence its valid and scores 20
+    public static Boolean itsValidSequence(ArrayList<String> sequence) {
+        if (sequence.size() != 5) {
+            return false;
+        }
+        for (int i = 0; i < sequence.size() - 1; i++) {
+            if ((Integer.parseInt(sequence.get(i))) != Integer.parseInt(sequence.get(i + 1)) + 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+//    Function to switch players
+    public static int switchPlayerNum(int playerNum) {
+        if (playerNum == 1) {
+            playerNum = 2;
+        } else {
+            playerNum = 1;
+        }
+        return playerNum;
+    }
+
+//    Function to calculate the total of each player
+    public static int calculateTotal(ArrayList<String> player1ScoreArr, ArrayList<String> player2ScoreArr) {
+        int player1Total = 0, player2Total = 0;
+        for (int i = 0; i < player1ScoreArr.size(); i++) {
+            player1Total += Integer.valueOf(player1ScoreArr.get(i));
+            player2Total += Integer.valueOf(player2ScoreArr.get(i));
+        }
+        if (player1Total > player2Total) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+//    Function to display the winner
+    public static void displayWinner(int winnerNumber) {
+        System.out.println("\nGame over.\nPlayer " + winnerNumber + " has won the game\n");
+        playGame();
+    }
+
+//    Function to play the game
+    public static int playGame() {
+        ArrayList<Integer> diceArr;
+        ArrayList<String> player1SelectionArr = new ArrayList<>();
+        ArrayList<String> player2SelectionArr = new ArrayList<>();
+        ArrayList<String> player1ScoreArr = new ArrayList<>();
+        ArrayList<String> player2ScoreArr = new ArrayList<>();
+        ArrayList<String> player1SequenceArray = new ArrayList<>();
+        ArrayList<String> player2SequenceArray = new ArrayList<>();
+        String input;
+        String categorySelected = "";
+        final int NUM_OF_THROWS = 5;
+        int playerNum = 1;
+        int roundNum = 1;
+        int total;
+        int winner;
+
+        firstPrompt();
+        drawTable(player1ScoreArr, player2ScoreArr, player1SelectionArr, player2SelectionArr);
+        for (int k = 0; k < 14; k++) {
+            int count = 0;
+            int remainingThrows = 2;
+            if (k % 2 == 0) {
+                displayRound(roundNum++);
+            }
+            displayFirstPrompt(NUM_OF_THROWS, playerNum);
+            remainingThrows = remainingThrowsPrompt(remainingThrows);
+            diceArr = generateDiceThrow(NUM_OF_THROWS);
+            input = selectCategoryOrDefer();
+            if (playerNum == 1) {
+                categorySelected = handleCategory(input, diceArr, player1SelectionArr);
+                if (!(categorySelected.isEmpty())) {
+                    count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
+                }
+
+            } else {
+                categorySelected = handleCategory(input, diceArr, player2SelectionArr);
+                if (!(categorySelected.isEmpty())) {
+                    count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
+                }
+            }
+
+            for (int i = 0; i < 2; i++) {
+                displayNextTurn(NUM_OF_THROWS - count, playerNum);
+                if (i == 0) {
+                    remainingThrowsPrompt(remainingThrows);
+                }
+                diceArr = generateDiceThrow(NUM_OF_THROWS - count);
+                if (count == 0 && i == 1) {
+                    if (playerNum == 1) {
+                        categorySelected = handleSelection(diceArr, player1SelectionArr);
+                        count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
+                    } else {
+                        categorySelected = handleSelection(diceArr, player2SelectionArr);
+                        count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
+                    }
+                } else if (!(count == 0)) {
+                    if (playerNum == 1) {
+                        count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
+                    } else {
+                        count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
+                    }
+                } else if (count == 0) {
+                    input = selectCategory();
+                    if (playerNum == 1) {
+                        count = playSelection(categorySelected, count, diceArr, player1SelectionArr);
+                    } else {
+                        count = playSelection(categorySelected, count, diceArr, player2SelectionArr);
+                    }
+                    if (!(count == 0)) {
+                        if (playerNum == 1) {
+                            count = playSelection(player1SequenceArray.get(0), count, diceArr, player1SequenceArray);
+                        } else {
+                            count = playSelection(player2SequenceArray.get(0), count, diceArr, player2SequenceArray);
+                        }
+                    }
+
+                }
+            }
+
+            if (playerNum == 1) {
+                total = displayTotal(categorySelected, count, playerNum, player1SequenceArray);
+                player1ScoreArr.add(Integer.toString(total));
+            } else {
+                total = displayTotal(categorySelected, count, playerNum, player2SequenceArray);
+                player2ScoreArr.add(Integer.toString(total));
+            }
+
+            drawTable(player1ScoreArr, player2ScoreArr, player1SelectionArr, player2SelectionArr);
+            playerNum = switchPlayerNum(playerNum);
+
+        }
+        winner = calculateTotal(player1ScoreArr, player2ScoreArr);
+        return winner;
+    }
+
+//    Main function
+    public static void main(String[] args) {
+        int playerWinner = playGame();
+        displayWinner(playerWinner);
+    }
+}
