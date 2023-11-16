@@ -107,12 +107,8 @@ public class SummativeAssesment {
     }
 
     //    Function to display the prompt
-    public static String displayFirstPrompt(int numberOfThrows, int playerNum) {
+    public static void displayFirstPrompt() {
         System.out.print("\nFirst throw of this turn, ");
-        displayNumOfThrows(numberOfThrows, playerNum);
-        String input = handleThrows(numberOfThrows);
-        return input;
-
     }
 
 //    Function to display the next turn
@@ -120,13 +116,13 @@ public class SummativeAssesment {
         if (numberOfThrows > 0) {
             System.out.print("Next throw of this turn, ");
             displayNumOfThrows(numberOfThrows, playerNum);
-            handleThrows(numberOfThrows);
         }
     }
 
 //    Function to display how many throws a player has
     public static void displayNumOfThrows(int numberOfThrows, int playerNum) {
         System.out.print("Player " + playerNum + " to throw " + numberOfThrows + " dice.\n");
+        handleThrows(numberOfThrows);
     }
 
     // Function to display how many throws
@@ -148,7 +144,7 @@ public class SummativeAssesment {
 //    Function to display the number of remaining throws
     public static int remainingThrowsPrompt(int remainingThrows) {
         if (remainingThrows > 0) {
-        System.out.println("\n" + remainingThrows + " throws remaining for this turn.\n");
+            System.out.println("\n" + remainingThrows + " throws remaining for this turn.\n");
         }
         remainingThrows--;
         return remainingThrows;
@@ -602,7 +598,8 @@ public class SummativeAssesment {
             if (k % 2 == 0) {
                 displayRound(roundNum++);
             }
-            displayFirstPrompt(NUM_OF_THROWS, playerNum);
+            displayFirstPrompt();
+            displayNumOfThrows(5, playerNum);
             remainingThrows = remainingThrowsPrompt(remainingThrows);
             diceArr = generateDiceThrow(NUM_OF_THROWS);
             input = selectCategoryOrDefer();
@@ -618,9 +615,7 @@ public class SummativeAssesment {
             for (int i = 0; i < 2; i++) {
                 numOfRemainingDiceToThrow = NUM_OF_THROWS - count;
                 displayNextTurn(numOfRemainingDiceToThrow, playerNum);
-                if (i == 0) {
-                    remainingThrowsPrompt(remainingThrows);
-                }
+                remainingThrows = remainingThrowsPrompt(remainingThrows);
                 diceArr = generateDiceThrow(numOfRemainingDiceToThrow);
                 if (count == 0 && i == 1) {
                     if (playerNum == 1) {
