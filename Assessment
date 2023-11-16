@@ -202,13 +202,22 @@ public class SummativeAssesment {
     }
 
 //    Function to handle categories 
-    public static String handleCategory(String input, ArrayList<Integer> arr, ArrayList<String> selectionArr) {
+    public static String handleCategory(String input, ArrayList<Integer> arr, ArrayList<String> selectionArrPlayer1, ArrayList<String> selectionArrPlayer2, int playerNum) {
         String categorySelected = "";
         switch (input.toLowerCase()) {
             case "s": {
-                categorySelected = handleSelection(arr, selectionArr);
-                selectionArr.add(categorySelected);
-                break;
+                switch (playerNum) {
+                    case 1: {
+                        categorySelected = handleSelection(arr, selectionArrPlayer1);
+                        selectionArrPlayer1.add(categorySelected);
+                        break;
+                    }
+                    case 2: {
+                        categorySelected = handleSelection(arr, selectionArrPlayer2);
+                        selectionArrPlayer2.add(categorySelected);
+                        break;
+                    }
+                }
             }
             case "d": {
                 handleDefer();
@@ -287,13 +296,22 @@ public class SummativeAssesment {
     }
 
 //    Function to play selection 
-    public static int playSelection(String categorySelected, int count, ArrayList<Integer> diceArr, ArrayList<String> player1SequenceArray) {
-        if (!(categorySelected.equals(""))) {
-            if (count < 5) {
-                if (categorySelected.equals("7")) {
-                    player1SequenceArray = handleSequence(diceArr, player1SequenceArray);
-                    count = player1SequenceArray.size();
-
+    public static int playSelection(String categorySelected, int count, ArrayList<Integer> diceArr, ArrayList<String> player1SequenceArray, ArrayList<String> player2SequenceArray, int playerNum) {
+        if (!(categorySelected.equals(""))) { // Check if a category a selected in order to play
+            if (count < 5) { // Check if there are any dices left to throw, if so play the round
+                if (categorySelected.equals("7")) { // Check if selection is a sequence
+                    switch (playerNum) { // Switching on playerNum in order to update the appropriate arrarys
+                        case 1: {
+                            player1SequenceArray = handleSequence(diceArr, player1SequenceArray);
+                            count = player1SequenceArray.size();
+                            break;
+                        }
+                        case 2: {
+                            player2SequenceArray = handleSequence(diceArr, player2SequenceArray);
+                            count = player2SequenceArray.size();
+                            break;
+                        }
+                    }
                 } else {
                     count += playSelection1to6(count, categorySelected, diceArr);
                     settingDiceAside(categorySelected, count);
@@ -603,14 +621,8 @@ public class SummativeAssesment {
             remainingThrows = remainingThrowsPrompt(remainingThrows);
             diceArr = generateDiceThrow(NUM_OF_THROWS);
             input = selectCategoryOrDefer();
-            if (playerNum == 1) {
-                categorySelected = handleCategory(input, diceArr, player1SelectionArr);
-                count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
-            } else {
-                categorySelected = handleCategory(input, diceArr, player2SelectionArr);
-                count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
-
-            }
+            categorySelected = handleCategory(input, diceArr, player1SelectionArr, player2SelectionArr, playerNum);
+            count = playSelection(categorySelected, count, diceArr, player1SequenceArray, player2SequenceArray, playerNum);
 
             for (int i = 0; i < 2; i++) {
                 numOfRemainingDiceToThrow = NUM_OF_THROWS - count;
@@ -618,30 +630,14 @@ public class SummativeAssesment {
                 remainingThrows = remainingThrowsPrompt(remainingThrows);
                 diceArr = generateDiceThrow(numOfRemainingDiceToThrow);
                 if (count == 0 && i == 1) {
-                    if (playerNum == 1) {
-                        categorySelected = handleSelection(diceArr, player1SelectionArr);
-                        count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
-                    } else {
-                        categorySelected = handleSelection(diceArr, player2SelectionArr);
-                        count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
-                    }
+                    categorySelected = handleSelection(diceArr, player1SelectionArr);
+                    count = playSelection(categorySelected, count, diceArr, player1SequenceArray, player2SequenceArray, playerNum);
                 } else if (!(count == 0)) {
-                    if (playerNum == 1) {
-                        count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
-                    } else {
-                        count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
-                    }
+                    count = playSelection(categorySelected, count, diceArr, player1SequenceArray, player2SequenceArray, playerNum);
                 } else if (count == 0) {
                     input = selectCategoryOrDefer();
-                    if (playerNum == 1) {
-                        categorySelected = handleCategory(input, diceArr, player1SelectionArr);
-                        count = playSelection(categorySelected, count, diceArr, player1SequenceArray);
-                    } else {
-                        categorySelected = handleCategory(input, diceArr, player2SelectionArr);
-                        count = playSelection(categorySelected, count, diceArr, player2SequenceArray);
-
-                    }
-
+                    categorySelected = handleCategory(input, diceArr, player1SelectionArr, player2SelectionArr, playerNum);
+                    count = playSelection(categorySelected, count, diceArr, player1SequenceArray, player2SequenceArray, playerNum);
                 }
             }
             if (playerNum == 1) {
