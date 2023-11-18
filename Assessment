@@ -49,7 +49,7 @@ public class SummativeAssesment {
 //            If input other than 1 or 0 display error message
             isValid = (!(input.equals("1") || input.equals("0")));
             if (isValid) {
-                System.out.println("Invalid input\n");
+                System.out.println("\nInvalid input, Enter '1' or '0'\n");
             }
         } while (isValid);
 //        Exiting the program in case user selects 0
@@ -123,7 +123,7 @@ public class SummativeAssesment {
             input = handleScanner("next");
             isValid = (!(input.toLowerCase().equals("t") || input.toLowerCase().equals("f"))); //input validation
             if (isValid) {
-                System.out.println("\nInvalid input");
+                System.out.println("\nInvalid input, Enter 't' or 'f'\n");
             }
             handleForfeit(input, playerNum);
         } while (isValid);
@@ -199,7 +199,7 @@ public class SummativeAssesment {
 
 //    Function to prompt the user to select a category or defer
     public static String selectCategory() {
-        System.out.print("Enter 's' to select category (number on die/dice) or 'd' to defer > ");
+        System.out.print("\nEnter 's' to select category (number on die/dice) or 'd' to defer > ");
         String input = handleScanner("next");
         System.out.println("");
         return input;
@@ -238,20 +238,30 @@ public class SummativeAssesment {
         boolean ItsValid;
         ItsValid = (!(input.toLowerCase().equals("s") || input.toLowerCase().equals("d")));
         if (ItsValid) {
-            System.out.println("\nInvalid prompt");
+            System.out.println("\nInvalid input, Enter 's' or 'd'\n");
         }
         return ItsValid;
     }
 
 //    Function to check if category selected is valid
     public static Boolean isValidCategory(String input, Map<Integer, String> selectionArrPlayer1, Map<Integer, String> SelectionArrPlayer2, int playerNum) {
-        Boolean itsValid;
-
-        if (input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4") || input.equals("5") || input.equals("6") || input.equals("7")) {
-            itsValid = true;
+        Boolean itsValid = false;
+        String[] tokens;
+        tokens = input.split("\\s+");
+        if (tokens.length > 1) {
+            System.out.println("You can only select 1 category");
         } else {
-            itsValid = false;
-            System.out.println("\nInvalid input");
+
+            try {
+                int intInput = Integer.valueOf(input);
+                if (intInput >= 1 && intInput <= 7) {
+                    itsValid = true;
+                } else {
+                    System.out.println("There is no such category");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Input not a number");
+            }
         }
         return itsValid && hasBeenSelected(input, selectionArrPlayer1, SelectionArrPlayer2, playerNum);
     }
@@ -284,23 +294,13 @@ public class SummativeAssesment {
         System.out.println("\nSelect category to play.");
         do {
             System.out.print("Ones (1) Twos (2) Threes (3) Fours (4) Fives (5) Sixes (6) or Sequence (7) > ");
-            choice = handleScanner("next");
+            choice = handleScanner("nextLine");
             itsValid = isValidCategory(choice, selectionArrPlayer1, selectionArrPlayer2, playerNum); // Validation check
         } while (!(itsValid));
         updateSelectionArray(choice, playerNum, selectionArrPlayer1, selectionArrPlayer2);
         return choice;
     }
 
-////    Function to update arrays
-//    public static void updateArray(String arrayType, String choice, String categorySelected, int playerNum, int total, Map<Integer, String> selectionArrPlayer1, Map<Integer, String> selectionArrPlayer2) {
-//        switch (arrayType) {
-//            case "selection" :{
-//                updateSelectionArray(choice, playerNum, selection)
-//                break;
-//            }
-//        }
-//    }
-//    public static void updateArrays()
 //        Function to upadte the appropriate selection arrays 
     public static void updateSelectionArray(String choice, int playerNum, Map<Integer, String> selectionArrPlayer1, Map<Integer, String> selectionArrPlayer2) {
         //        Switching on playerNum to update appropriate arrays
@@ -400,7 +400,7 @@ public class SummativeAssesment {
         do {
             System.out.print("\nEnter which dice you wish to set aside using the number labels separated by a space (eg., 1 , 3 , 5) or enter 0 for none > ");
             input = handleScanner("nextLine");
-            tokens = input.split("\\s+");
+            tokens = input.split("\\s+"); // Spliting based on whitespace
             for (String token : tokens) {
                 try {
 //                Trying to parse the token as an integer
@@ -457,23 +457,17 @@ public class SummativeAssesment {
 //    Function to display the sequence of dices
     public static void displaySequenceSelected(ArrayList<Integer> arr, ArrayList<String> sequenceArraySelected) {
         int count = 0;
-        if (sequenceArraySelected.size() == 1 && sequenceArraySelected.get(0).equals("0")) {
-            System.out.println("\nNone selected");
-            System.out.println("");
+        Collections.sort(sequenceArraySelected);
+        if (sequenceArraySelected.isEmpty()) { // Check if player has selected any dice to keep if not display the message
+            System.out.println("\nYou have selected no dice to keep.");
         } else {
-            Collections.sort(sequenceArraySelected);
-            if (sequenceArraySelected.isEmpty()) { // Check if player has selected any dice to keep if not display the message
-                System.out.println("\nYou have selected no dice to keep.");
-            } else {
-                System.out.println("\nYou have selected the following dice to keep.");
-                for (String numbar : sequenceArraySelected) {
-                    System.out.print("[" + numbar + "]");
-                    count++;
-                }
+            System.out.println("\nYou have selected the following dice to keep.");
+            for (String numbar : sequenceArraySelected) {
+                System.out.print("[" + numbar + "]");
+                count++;
             }
-            System.out.println("\n");
         }
-
+        System.out.println("\n");
     }
 
 //    Function to count the dices matching the selection
@@ -512,7 +506,7 @@ public class SummativeAssesment {
         } else {
             total = displayNormalTotal(categorySelected, count, playerNum); // Calculate normal total
         }
-        
+
         updateScoreArrays(categorySelected, playerNum, total, scoreArrPlayer1, scoreArrPlayer2);
 
         return total;
@@ -528,7 +522,6 @@ public class SummativeAssesment {
 
 //    Function to display the total if player has selected a sequence  
     public static int displaySequenceTotal(ArrayList<String> player1SequenceArray, ArrayList<String> player2SequenceArray, int playerNum) {
-        int total = 0;
         Boolean isValidSequence = false;
         switch (playerNum) {
             case 1: {
@@ -540,7 +533,12 @@ public class SummativeAssesment {
                 break;
             }
         }
+        return displaySeqeunceResults(isValidSequence, playerNum);
+    }
 
+//      Function to display the results of sequene selection
+    public static int displaySeqeunceResults(boolean isValidSequence, int playerNum) {
+        int total = 0;
         if (isValidSequence) {
             System.out.println("A correct sequence has been established");
             System.out.println("Player " + playerNum + " scores 20 for the sequence category.");
@@ -550,6 +548,7 @@ public class SummativeAssesment {
             System.out.println("Player " + playerNum + " scores 0 for the sequence category.");
         }
         return total;
+
     }
 
 //    Function to check if the sequence its valid and scores 20
@@ -666,23 +665,9 @@ public class SummativeAssesment {
             total = displayTotal(categorySelected, diceScored, playerNum, player1SequenceArray, player2SequenceArray, player1ScoreArr, player2ScoreArr); //Displaying total
             drawTable(player1ScoreArr, player2ScoreArr, player1SelectionArr, player2SelectionArr); //Drawing table
             playerNum = switchPlayerNum(playerNum); //Switching player number at the end of eac1h turn
-            System.out.println("Player 1 selection arr");
-            displaySparseArray(player1SelectionArr);
-            System.out.println("Player 2 selection arr");
-            displaySparseArray(player2SelectionArr);
-            System.out.println("Player 1 score arr");
-            displaySparseArray(player1ScoreArr);
-            System.out.println("Player 2 score arr");
-            displaySparseArray(player2ScoreArr);
         }
         winner = calculateTotal(player1ScoreArr, player2ScoreArr); // Calculating the winner
         return winner;
-    }
-    
-    private static void displaySparseArray(Map<Integer, String> sparseArray) {
-        for (Map.Entry<Integer, String> entry : sparseArray.entrySet()) {
-            System.out.println("Index " + entry.getKey() + ": " + entry.getValue());
-        }
     }
 
     public static void main(String[] args) {
@@ -691,3 +676,4 @@ public class SummativeAssesment {
 
     }
 }
+
