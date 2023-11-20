@@ -133,7 +133,7 @@ public class SummativeAssesment {
 //    Function to handle forfeit
     public static void handleForfeit(String input, int playerNum) {
         if (input.toLowerCase().equals("f")) {
-            System.out.println("Player " + playerNum + " forfeited.\nGame over.");
+            System.out.println("\nPlayer " + playerNum + " forfeited.\nGame over.");
             System.exit(0);
         }
     }
@@ -437,6 +437,10 @@ public class SummativeAssesment {
                     System.out.println("\nInput out of bounds, plase try again");
                     return false;
                 }
+                if (num == 0 && sequenceArray.size() > 1) {
+                    System.out.println("\nYou chose nothing AND something, that don't make sense");
+                    return false;
+                }
             }
         }
         return true;
@@ -676,3 +680,4 @@ public class SummativeAssesment {
 
     }
 }
+
