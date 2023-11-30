@@ -249,7 +249,6 @@ public class SummativeAssesment {
         }
         return itsValid && hasBeenSelected(input, selectionArrPlayer1, SelectionArrPlayer2, playerNum);
     }
-    
 
 //      Function to check if the category has not already been selected
     public static Boolean hasBeenSelected(String input, Map<Integer, String> selectionArrPlayer1, Map<Integer, String> SelectionArrPlayer2, int playerNum) {
@@ -272,7 +271,6 @@ public class SummativeAssesment {
         return true;
     }
 
-//        Function to upadte the appropriate selection arrays 
     public static void updateSelectionArray(String choice, int playerNum, Map<Integer, String> selectionArrPlayer1, Map<Integer, String> selectionArrPlayer2) {
         //        Switching on playerNum to update appropriate arrays
         int index = Integer.valueOf(choice) - 1; // Getting the appropriate index to update the arrray
@@ -560,53 +558,61 @@ public class SummativeAssesment {
         playGame();
     }
 
-    public static int playGame() {
-        int arraySize = 7;
-        final int NUM_OF_DICES_AT_START = 5;
-        final int NUM_OF_TURNS = 14;
-        final int NUM_OF_THROWS = 3;
-        int numOfRemainingDiceToThrow;
-        int playerNum = 1;
+    public static void playRound(int NUM_OF_THROWS, int numOfRemainingDiceToThrow, int NUM_OF_DICES_AT_START, int playerNum, ArrayList<Integer> diceArr, String selectOrDefer, int total, Map<Integer, String> player1SelectionArr, Map<Integer, String> player2SelectionArr, Map<Integer, String> player1ScoreArr, Map<Integer, String> player2ScoreArr, ArrayList<String> player1SequenceArray, ArrayList<String> player2SequenceArray) {
+        int diceScored = 0;
         int roundNum = 1;
-        int winner;
-        int total;
-        String selectOrDefer;
-//      Using hashMaps so that we can insert elements at specific position without shifting other elements
-        Map<Integer, String> player1SelectionArr = new HashMap<>(arraySize);
-        Map<Integer, String> player2SelectionArr = new HashMap<>(arraySize);
-        Map<Integer, String> player1ScoreArr = new HashMap<>(arraySize);
-        Map<Integer, String> player2ScoreArr = new HashMap<>(arraySize);
-//      No need for shifting so just use ArrayLists
-        ArrayList<Integer> diceArr = new ArrayList<>(arraySize);
-        ArrayList<String> player1SequenceArray = new ArrayList<>(arraySize);
-        ArrayList<String> player2SequenceArray = new ArrayList<>(arraySize);
-//      Populating the hashMaps with empty strings so we can replace later, for drawing the table with empty cells
+        int remainingThrows = 2;
+        String categorySelected = "";
+        for (int i = 0; i < NUM_OF_THROWS; i++) {
+            numOfRemainingDiceToThrow = NUM_OF_DICES_AT_START - diceScored; //Calculating the number of remaining dice to throw 
+            displayFirstPrompt(numOfRemainingDiceToThrow, playerNum, i, diceScored, NUM_OF_DICES_AT_START); // Displaying first prompt
+            remainingThrows = remainingThrowsPrompt(remainingThrows, diceScored, NUM_OF_DICES_AT_START); // Calculating the number of remaining throws
+            diceArr = generateDiceThrow(numOfRemainingDiceToThrow); // Simulating the dice throws
+            selectOrDefer = selectCategoryOrDefer(categorySelected, i); // Prompting the user to select or defer
+            categorySelected = handleCategory(categorySelected, selectOrDefer, player1SelectionArr, player2SelectionArr, playerNum, i); // Handling selection or deference
+            diceScored = playSelection(categorySelected, diceScored, diceArr, player1SequenceArray, player2SequenceArray, playerNum, NUM_OF_DICES_AT_START); // Playing selection
+        }
+        total = displayTotal(categorySelected, diceScored, playerNum, player1SequenceArray, player2SequenceArray, player1ScoreArr, player2ScoreArr);
+        drawTable(player1ScoreArr, player2ScoreArr, player1SelectionArr, player2SelectionArr);
+    }
+
+    public static void initializeArrays(Map<Integer, String> player1SelectionArr, Map<Integer, String> player2SelectionArr, Map<Integer, String> player1ScoreArr, Map<Integer, String> player2ScoreArr, int arraySize) {
+        //      Populating the hashMaps with empty strings so we can replace later, for drawing the table with empty cells
         for (int i = 0; i < arraySize; i++) {
             player1SelectionArr.put(i, "");
             player2SelectionArr.put(i, "");
             player1ScoreArr.put(i, "");
             player2ScoreArr.put(i, "");
         }
+    }
+
+    public static int playGame() {
+        int arraySize = 7;
+        final int NUM_OF_DICES_AT_START = 5;
+        final int NUM_OF_TURNS = 14;
+        final int NUM_OF_THROWS = 3;
+        int numOfRemainingDiceToThrow = 0;
+        int playerNum = 1;
+        int winner;
+        int roundNum = 1;
+        int total = 0;
+        String selectOrDefer = "";
+        Map<Integer, String> player1SelectionArr = new HashMap<>(arraySize);//Using hashMaps so that we can insert elements at specific position without shifting other elements
+        Map<Integer, String> player2SelectionArr = new HashMap<>(arraySize);
+        Map<Integer, String> player1ScoreArr = new HashMap<>(arraySize);
+        Map<Integer, String> player2ScoreArr = new HashMap<>(arraySize);
+        initializeArrays(player1SelectionArr, player2SelectionArr, player1ScoreArr, player2ScoreArr, arraySize);
+        ArrayList<Integer> diceArr = new ArrayList<>(arraySize); //No need for shifting so just use ArrayLists
+        ArrayList<String> player1SequenceArray = new ArrayList<>(arraySize);
+        ArrayList<String> player2SequenceArray = new ArrayList<>(arraySize);
         firstPrompt();
         drawTable(player1ScoreArr, player2ScoreArr, player1SelectionArr, player2SelectionArr);
         for (int k = 0; k < NUM_OF_TURNS; k++) {
-            int diceScored = 0;
-            int remainingThrows = 2;
-            String categorySelected = "";
-            if (k % 2 == 0) { // Check if 2 turns have been played, if so display next round prompt
+            if (k % 2 == 0) // Check if 2 turns have been played, if so display next round prompt
                 displayRound(roundNum++);
-            }
-            for (int i = 0; i < NUM_OF_THROWS; i++) {
-                numOfRemainingDiceToThrow = NUM_OF_DICES_AT_START - diceScored;
-                displayFirstPrompt(numOfRemainingDiceToThrow, playerNum, i, diceScored, NUM_OF_DICES_AT_START);
-                remainingThrows = remainingThrowsPrompt(remainingThrows, diceScored, NUM_OF_DICES_AT_START);
-                diceArr = generateDiceThrow(numOfRemainingDiceToThrow);
-                selectOrDefer = selectCategoryOrDefer(categorySelected, i);
-                categorySelected = handleCategory(categorySelected, selectOrDefer, player1SelectionArr, player2SelectionArr, playerNum, i);
-                diceScored = playSelection(categorySelected, diceScored, diceArr, player1SequenceArray, player2SequenceArray, playerNum, NUM_OF_DICES_AT_START);
-            }
-            total = displayTotal(categorySelected, diceScored, playerNum, player1SequenceArray, player2SequenceArray, player1ScoreArr, player2ScoreArr);
-            drawTable(player1ScoreArr, player2ScoreArr, player1SelectionArr, player2SelectionArr);
+            playRound(NUM_OF_THROWS, numOfRemainingDiceToThrow, NUM_OF_DICES_AT_START,
+                    playerNum, diceArr, selectOrDefer, total, player1SelectionArr, player2SelectionArr,
+                    player1ScoreArr, player2ScoreArr, player1SequenceArray, player2SequenceArray);
             playerNum = switchPlayerNum(playerNum);
         }
         winner = determineWinner(player1ScoreArr, player2ScoreArr);
