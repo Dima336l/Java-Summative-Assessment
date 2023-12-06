@@ -560,7 +560,6 @@ public class SummativeAssesment {
 
     public static void playRound(int NUM_OF_THROWS, int numOfRemainingDiceToThrow, int NUM_OF_DICES_AT_START, int playerNum, ArrayList<Integer> diceArr, String selectOrDefer, int total, Map<Integer, String> player1SelectionArr, Map<Integer, String> player2SelectionArr, Map<Integer, String> player1ScoreArr, Map<Integer, String> player2ScoreArr, ArrayList<String> player1SequenceArray, ArrayList<String> player2SequenceArray) {
         int diceScored = 0;
-        int roundNum = 1;
         int remainingThrows = 2;
         String categorySelected = "";
         for (int i = 0; i < NUM_OF_THROWS; i++) {
